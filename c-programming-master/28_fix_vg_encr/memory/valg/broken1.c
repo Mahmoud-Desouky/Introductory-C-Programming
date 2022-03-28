@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+int cmplong(const void * vp1, const void * vp2) {
+  const long * p1 = vp1;
+  const long * p2 = vp2;
+  return *p1 - *p2;
+}
+int main(void) {
+  char * line= NULL;
+  size_t sz =0;
+  long * array = NULL;
+  size_t n = 0;
+  printf("entering while loop\n");
+  while(getline(&line, &sz, stdin) > 0){
+    n++;
+    printf("calling realloc\n");
+    array=realloc(array, n * sizeof(*array));
+    printf("setting array[%ld]\n", n-1);
+    array[n-1] = strtol(line, NULL, 0);
+  }
+  printf("freeing line\n");
+  free(line);
+  printf("calling qsort\n");
+  qsort(&array, n, sizeof(*array), cmplong); // should be qsort((void*)array, n, sizeof(*array), cmplong);
+  printf("entering for loop\n");
+  for (size_t i = 0; i < n; i++) {
+    printf("%ld\n", array[i]);
+    free(&array[i]);
+  }
+  return EXIT_SUCCESS;
+}
